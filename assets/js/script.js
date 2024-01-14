@@ -74,25 +74,27 @@ searchBtn.on('click', (e) => {
 
 // render the best unique results in the dashboard (up to 5 result)
 function renderResults(objArr) {
-    const resultsContainer = $('#results-container').empty();
 
+    const resultsContainer = $('#results-container').empty();
     if (objArr.length > 1) {
         $(resultsContainer).append($('<p>').addClass('m-0').text('Did you mean:'))
     };
 
     $(objArr.splice(1)).each((i, r) => {
-        resultsContainer.append($('<button>').addClass('btn btn-sm btn-warning rounded-pill').text(`${r.name}, ${r.country}`))
-        .on('click', (e) => {
-            e.preventDefault();
-            searchLocation(`${r.name}, ${r.country}`);
-        });
+        let closeResult = $('<button>')
+            .addClass('btn btn-sm btn-warning rounded-pill')
+            .text(`${r.name}, ${r.country}`)
+            .on('click', (e) => {
+                e.preventDefault();
+                searchLocation(`${r.name}, ${r.country}`);
+            });
+        resultsContainer.append(closeResult);
     });
 };
 // search location function
 function searchLocation(locationString) {
 
     const apiKey = `748b56884fc69047f189d030cf1dd596`;
-
     const inputValidation = $('.input-validation');
 
     // check if input field is empty
@@ -125,11 +127,17 @@ function searchLocation(locationString) {
                 if (!recentLocations.includes(`${data[0].name}, ${data[0].country}`)) {
                     recentLocations.push(`${data[0].name}, ${data[0].country}`);
                     dropDownRecent();
+                    
                 } else {
                     // if already there move it on top of the dropdown
                     recentLocations.push(recentLocations.splice(recentLocations.indexOf(`${data[0].name}, ${data[0].country}`), 1)[0]);
                     dropDownRecent();
                 }
+
+                $('#offcanvasScrolling').removeClass('show');
+
+                $('#current-weather').empty();
+                createCard($('#current-weather'), `Currently in ${data[0].name}, ${data[0].country}:`);
                 
             });
 
@@ -138,3 +146,17 @@ function searchLocation(locationString) {
         $(inputValidation).each((i, x) => { $(x).addClass('is-invalid') });
     }
 };
+
+
+function createCard(parent, title) {
+    let col = $('<div>').addClass('col');
+    let card = $('<div>').addClass('card h-100 border-0 rounded-4 bg-body-secondary');
+    let cardBody = $('<div>').addClass('card-body');
+    let cardTitle = $('<h5>').addClass('card-title').text(title);
+    
+    $(cardBody).append(cardTitle);
+    $(card).append(cardBody);
+    $(col).append(card);
+    
+    $(parent).append(col);
+}
