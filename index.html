@@ -15,15 +15,15 @@
 <body>
 
   <!-- navbar / Sidebar component -->
-  <nav class="navbar bg-body-tertiary sticky-top">
-    <div class="container-fluid">
+  <nav class="navbar sticky-top">
+    <div class="container-fluid col-lg-10 col-xl-8 py-2 px-3 mx-2 mx-lg-auto">
       <a class="navbar-brand" href="#">OpenWeatherPal</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
         aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="offcanvas offcanvas-end show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+      <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
         id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
         <div class="offcanvas-header">
           <!-- close button -->
@@ -63,8 +63,13 @@
     </div>
   </nav>
 
-  <div class="container-fluid">
-    <div class="d-grid gap-2 d-md-block" id="results-container">
+  <div class="container-fluid p-3 col-lg-10 col-xl-8" id="dashboard">
+    <div class="d-flex flex-wrap gap-2 align-items-baseline">
+    </div>
+    <div class="container px-0">
+      <div class="col" id="results-container"></div>
+      <div class="row row-cols-1 g-2 mb-2" id="current-weather">
+      </div>
     </div>
   </div>
 
