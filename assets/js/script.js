@@ -28,14 +28,15 @@ function dropDownRecent() {
 
         $.each(recentLocations, function (i, location) {
             const dropDownLi = $('<li>').attr('class', 'd-flex px-2');
-            const divRecent = $('<button>').attr('class', 'dropdown-item rounded');
-            $(dropDownLi)
-                .addClass('recent-item')
-                .append(divRecent.text(location))
+            const divRecent = $('<button>')
+                .attr('class', 'dropdown-item rounded')
                 .on('click', (e) => {
                     e.preventDefault();
                     searchLocation(location);
                 });
+            $(dropDownLi)
+                .addClass('recent-item')
+                .append(divRecent.text(location));
             $(dropDownLi).hover(
                 function () {
                     $(this).append($(removeRecentBtn)).on('click', function (e) {
@@ -74,9 +75,18 @@ searchBtn.on('click', (e) => {
 // render the best unique results in the dashboard (up to 5 result)
 function renderResults(objArr) {
     const resultsContainer = $('#results-container').empty();
-    $(objArr).each((i, r) => {
-        resultsContainer.append($('<button>').addClass('btn btn-outline-secondary').text(`${r.name}, ${r.country}`));
-    })
+
+    if (objArr.length > 1) {
+        $(resultsContainer).append($('<p>').addClass('m-0').text('Did you mean:'))
+    };
+
+    $(objArr.splice(1)).each((i, r) => {
+        resultsContainer.append($('<button>').addClass('btn btn-sm btn-warning rounded-pill').text(`${r.name}, ${r.country}`))
+        .on('click', (e) => {
+            e.preventDefault();
+            searchLocation(`${r.name}, ${r.country}`);
+        });
+    });
 };
 // search location function
 function searchLocation(locationString) {
@@ -88,18 +98,8 @@ function searchLocation(locationString) {
     // check if input field is empty
     if (locationString) {
 
-        // if yes, display invalid feedback
+        // if not, remove invalid feedback
         $(inputValidation).each((i, x) => { $(x).removeClass('is-invalid') });
-
-        // if location is not yet in the recent dropdown add it and refresh the list
-        if (!recentLocations.includes(locationString)) {
-            recentLocations.push(locationString);
-            dropDownRecent();
-        } else {
-            // if already there move it on top of the dropdown
-            recentLocations.push(recentLocations.splice(recentLocations.indexOf(locationString), 1)[0]);
-            dropDownRecent();
-        }
 
         const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${locationString}&limit=5&appid=${apiKey}`;
 
@@ -120,6 +120,17 @@ function searchLocation(locationString) {
                 })
                 console.log(data);
                 renderResults(data);
+
+                // if location is not yet in the recent dropdown add it and refresh the list
+                if (!recentLocations.includes(`${data[0].name}, ${data[0].country}`)) {
+                    recentLocations.push(`${data[0].name}, ${data[0].country}`);
+                    dropDownRecent();
+                } else {
+                    // if already there move it on top of the dropdown
+                    recentLocations.push(recentLocations.splice(recentLocations.indexOf(`${data[0].name}, ${data[0].country}`), 1)[0]);
+                    dropDownRecent();
+                }
+                
             });
 
     } else {
