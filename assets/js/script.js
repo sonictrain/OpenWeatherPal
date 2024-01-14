@@ -29,7 +29,13 @@ function dropDownRecent() {
         $.each(recentLocations, function (i, location) {
             const dropDownLi = $('<li>').attr('class', 'd-flex px-2');
             const divRecent = $('<button>').attr('class', 'dropdown-item rounded');
-            $(dropDownLi).addClass('recent-item').append(divRecent.text(location));
+            $(dropDownLi)
+                .addClass('recent-item')
+                .append(divRecent.text(location))
+                .on('click', (e) => {
+                    e.preventDefault();
+                    searchLocation(location);
+                });
             $(dropDownLi).hover(
                 function () {
                     $(this).append($(removeRecentBtn)).on('click', function (e) {
@@ -58,33 +64,44 @@ function dropDownRecent() {
         .append(clearAllEl);
 };
 
-// click on search button event listener 
+// click on search button event listener
 searchBtn.on('click', (e) => {
-
     e.preventDefault();
-
     const inputCity = $('#inputCity').val().trim();
+    searchLocation(inputCity);
+});
+
+// render the best unique results in the dashboard (up to 5 result)
+function renderResults(objArr) {
+    const resultsContainer = $('#results-container').empty();
+    $(objArr).each((i, r) => {
+        resultsContainer.append($('<button>').addClass('btn btn-outline-secondary').text(`${r.name}, ${r.country}`));
+    })
+};
+// search location function
+function searchLocation(locationString) {
+
     const apiKey = `748b56884fc69047f189d030cf1dd596`;
 
     const inputValidation = $('.input-validation');
 
     // check if input field is empty
-    if (inputCity) {
+    if (locationString) {
 
         // if yes, display invalid feedback
         $(inputValidation).each((i, x) => { $(x).removeClass('is-invalid') });
 
         // if location is not yet in the recent dropdown add it and refresh the list
-        if (!recentLocations.includes(inputCity)) {
-            recentLocations.push(inputCity);
+        if (!recentLocations.includes(locationString)) {
+            recentLocations.push(locationString);
             dropDownRecent();
         } else {
             // if already there move it on top of the dropdown
-            recentLocations.push(recentLocations.splice(recentLocations.indexOf(inputCity), 1)[0]);
+            recentLocations.push(recentLocations.splice(recentLocations.indexOf(locationString), 1)[0]);
             dropDownRecent();
         }
 
-        const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${inputCity}&limit=5&appid=${apiKey}`;
+        const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${locationString}&limit=5&appid=${apiKey}`;
 
         // API Call to get the best 5 result
         fetch(geoURL)
@@ -92,10 +109,10 @@ searchBtn.on('click', (e) => {
                 return response.json();
             })
             .then(function (data) {
-                
+
                 // filter out the array and keep one unique result per country
                 let uniqueCountry = []
-                data = jQuery.map((data), function( obj, i) {
+                data = jQuery.map((data), function (obj, i) {
                     if (!uniqueCountry.includes(obj.country)) {
                         uniqueCountry.push(obj.country);
                         return obj;
@@ -109,13 +126,4 @@ searchBtn.on('click', (e) => {
         // if input field is empty show invalid feedback
         $(inputValidation).each((i, x) => { $(x).addClass('is-invalid') });
     }
-
-});
-
-// render the best unique results in the dashboard (up to 5 result)
-function renderResults(objArr) {
-    const resultsContainer = $('#results-container').empty();
-    $(objArr).each((i, r) => {
-        resultsContainer.append($('<button>').addClass('btn btn-outline-secondary').text(`${r.name}, ${r.country}`));
-    })
-}
+};
