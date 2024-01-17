@@ -15,9 +15,9 @@
 
 <body>
 
-  <nav class="navbar mx-3 mx-xl-auto col-xl-10 col-xxl-8 px-2 sticky-top navbar-bg-grey rounded-bottom-4">
+  <nav class="navbar mx-2 mx-xl-auto col-xl-10 col-xxl-8 px-2 sticky-top custom-bg-grey rounded-bottom-4">
     <div class="d-flex">
-      <a class="navbar-brand" href="#">OpenWeatherPal</a>
+      <a class="navbar-brand ms-2" href="#">OpenWeatherPal</a>
     </div>
     <div class="d-flex">
       <div class="input-group has-validation">
@@ -26,8 +26,7 @@
           <label for="inputCity" id="input-label">City</label>
         </div>
         <button class="btn btn-outline-secondary" id="search-btn" type="submit">Search</button>
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-          data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split rounded-end-3" data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" id="dropdown-recent">
@@ -36,13 +35,11 @@
     </div>
   </nav>
 
-  <div class="container-fluid mx-3 mx-xl-auto col-xl-10 col-xxl-8 p-0 mt-3 overflow-hidden" id="dashboard">
+  <div class="container-fluid mx-2 mx-xl-auto mt-2 col-xl-10 col-xxl-8 p-0 overflow-hidden" id="dashboard">
     <div class="position-relative rounded-4 overflow-hidden" id="map">
       <div class="d-flex flex-wrap gap-2 align-items-center position-absolute bottom-0 start-50 translate-middle-x z-3 m-2 p-2 rounded-pill" id="results-container"></div>
     </div>
-    <div class="container-fluid px-0">
-      <div class="row row-cols-1 g-2 mb-2" id="current-weather">
-      </div>
+    <div class="container-fluid mx-0 mt-2" id="current-weather">
     </div>
   </div>
 
