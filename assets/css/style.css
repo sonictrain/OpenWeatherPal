@@ -2,7 +2,7 @@
     transition: all 0.5s ease;
 }
 
-.navbar-bg-grey {
+.custom-bg-grey {
     background-color: rgb(244, 244, 244);
 }
 
@@ -18,6 +18,10 @@
     width: 9rem;
 }
 
+.wi-icon-bg {
+    width: 20rem;
+}
+
 #dropdown-recent {
     width: 100%;
 }
@@ -28,6 +32,24 @@
 }
 
 #map {
-    width: calc(100% - 32px);
+    width: calc(100% - 16px);
     height: calc(100vh/3);
+}
+
+#current-weather {
+    width: calc(100% - 16px);
+    height: calc(100vh/4);
+}
+
+@media (min-width: 1199px) {
+    #map {
+        width: 100%;
+        height: calc(100vh/3);
+    }
+
+    #current-weather {
+        width: 100%;
+        height: calc(100vh/4);
+    }
+
 }
