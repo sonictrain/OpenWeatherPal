@@ -158,7 +158,7 @@ function searchLocation(locationString) {
                 // empty the current-weather container
                 $('#current-weather').empty();
                 // create and append the location name
-                createCard($('#current-weather'), `Currently in ${data[0].name}, ${data[0].country}:`);
+                // createCard($('#current-weather'), `Currently in ${data[0].name}, ${data[0].country}:`);
 
                 // save lat & lon
                 const lat = data[0].lat;
@@ -188,9 +188,76 @@ function searchLocation(locationString) {
                     .then(function (data) {
                         console.log(data);
 
-                        // display the weather icon
-                        let weatherIcon = data.weather[0].id;
-                        $('#current-weather').append($('<img>').addClass('wi-icon-md').attr('src', `./assets/images/svg/${iconMap["openweathermap/codes/"][weatherIcon]}.svg`));
+                        let currentWeather = {
+                            location: `${data.name}, ${data.sys.country}`,
+                            humidty: data.main.humidity + ' %',
+                            pressure: data.main.pressure + ' hPa',
+                            temp: {
+                                max: data.main.temp_max,
+                                actual: data.main.temp,
+                                min: data.main.temp_min,
+                                feels_like: data.main.feels_like,
+                                },
+                            visibility: data.visibility,
+                            weather: {
+                                main: data.weather[0].main,
+                                description: data.weather[0].description,
+                                icon: data.weather[0].icon,
+                                id: data.weather[0].id,
+                                },
+                            wind: {
+                                direction: data.wind.deg,
+                                speed: data.wind.speed + ' m/s',
+                            },
+                            daylight: {
+                                sunrise: data.sys.sunrise,
+                                sunset: data.sys.sunset,
+                            }
+                        }
+
+                        // creating the grid to display the weather information
+                        const gridContainer = $('<div>').addClass('row gap-2 h-100');
+                        $('#current-weather').append($(gridContainer));
+
+                        // 1 row widgets
+                        const widgets = [
+                            $('<div>').addClass('col custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4')
+                            .text(currentWeather.weather.description)
+                            .append($('<img>')
+                                .attr('src', './assets/images/svg/'+getIcon('night',`${currentWeather.weather.id}`)+'.svg')
+                                .addClass('position-absolute top-50 start-50 translate-middle opacity-75 wi-icon-bg')),
+                            $('<div>').addClass('col p-4 custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize d-flex flex-column align-content-start justify-content-between')
+                            .append($('<p>').addClass('text-start').text('Temperature'))
+                            .append($('<div>').addClass('d-flex flex-row align-items-end justify-content-between')
+                                    .append($('<p>')
+                                        .addClass('fs-5')
+                                        .text(K2c(currentWeather.temp.min)))
+                                    .append($('<p>')
+                                        .text(K2c(currentWeather.temp.feels_like)))
+                                    .append($('<p>')
+                                        .addClass('fs-5')
+                                        .text(K2c(currentWeather.temp.max))))
+                            .append($('<img>')
+                            .attr('src', './assets/images/svg/thermometer-celsius.svg')
+                            .addClass('position-absolute top-50 start-50 translate-middle opacity-50 wi-icon-bg')),
+                            $('<div>').addClass('col p-4 custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize d-flex flex-column align-content-start justify-content-between')
+                            .append($('<p>')
+                                .addClass('text-start')
+                                .text('Humidity'))
+                            .append($('<p>')
+                                .addClass('text-start')
+                                .text(currentWeather.humidty))
+                            .append($('<img>')
+                                .attr('src', './assets/images/svg/humidity.svg')
+                                .addClass('position-absolute top-50 start-50 translate-middle opacity-50 wi-icon-bg')),
+                        ];
+
+                        $(widgets).each((i, w) => {$(gridContainer).append(w)});
+
+                        // const weatherContainer = $('<div>').addClass('row gap-2').append
+
+
+                        // $('#current-weather').append($('<img>').addClass('wi-icon-md').attr('src', `./assets/images/svg/${iconMap["openweathermap/codes/"][weatherIcon]}.svg`));
                     })
                     // console log the error if any
                     .catch(error => console.log(error));
@@ -221,3 +288,7 @@ function createCard(parent, title) {
 
     $(parent).append(col);
 };
+
+function K2c(K) {
+    return (Number(K)-273).toFixed() + '°C';
+}
