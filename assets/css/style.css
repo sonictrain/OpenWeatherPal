@@ -1,0 +1,33 @@
+* {
+    transition: all 0.5s ease;
+}
+
+.navbar-bg-grey {
+    background-color: rgb(244, 244, 244);
+}
+
+.wi-icon-sm {
+    width: 3rem;
+}
+
+.wi-icon-md {
+    width: 6rem;
+}
+
+.wi-icon-lg {
+    width: 9rem;
+}
+
+#dropdown-recent {
+    width: 100%;
+}
+
+#results-container {
+    background-color: rgba(136, 136, 136, 0.261);
+    backdrop-filter: blur(10px);
+}
+
+#map {
+    width: calc(100% - 32px);
+    height: calc(100vh/3);
+}
