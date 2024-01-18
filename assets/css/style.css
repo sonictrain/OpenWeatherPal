@@ -1,3 +1,5 @@
+/* transition for all the elements */
+
 * {
     transition: all 0.5s ease;
 }
@@ -5,6 +7,8 @@
 .custom-bg-grey {
     background-color: rgb(249, 249, 249);
 }
+
+/* weather icons */
 
 .wi-icon-sm {
     width: 3rem;
@@ -23,6 +27,8 @@
     opacity: 50%;
     z-index: -1;
 }
+
+/* widgets style */
 
 .min-temp {
     background-color: rgb(55, 202, 255);
@@ -53,14 +59,20 @@
     height: 3rem;
 }
 
+p {
+    margin: 0;
+}
+
 #map {
     width: calc(100% - 16px);
     height: calc(100vh/3);
 }
 
-#current-weather {
+#current-weather, #forecast-weather {
     width: calc(100% - 16px);
 }
+
+/* media query */
 
 @media (min-width: 1199px) {
     #map {
@@ -68,7 +80,7 @@
         height: calc(100vh/3);
     }
 
-    #current-weather {
+    #current-weather, #forecast-weather {
         width: 100%;
     }
 
