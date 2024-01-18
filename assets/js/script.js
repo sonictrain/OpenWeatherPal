@@ -133,7 +133,7 @@ function searchLocation(locationString) {
         $(inputValidation).each((i, x) => { $(x).removeClass('is-invalid') });
         $('#input-label').removeClass('text-danger').text('City');
 
-        const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${locationString}&limit=5&appid=${apiKey}`;
+        const geoURL = `https://api.openweathermap.org/geo/1.0/direct?q=${locationString}&limit=5&appid=${apiKey}`;
 
         // API Call to get the best 5 result
         fetch(geoURL)
