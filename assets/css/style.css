@@ -3,7 +3,7 @@
 }
 
 .custom-bg-grey {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(249, 249, 249);
 }
 
 .wi-icon-sm {
@@ -19,16 +19,38 @@
 }
 
 .wi-icon-bg {
-    width: 20rem;
+    width: 25rem;
+    opacity: 50%;
+    z-index: -1;
+}
+
+.min-temp {
+    background-color: rgb(55, 202, 255);
+}
+.max-temp {
+    background-color: rgb(255, 155, 55);
+}
+
+.wind-speed {
+    background-color: rgb(97, 129, 204);
+}
+
+.wind-dir {
+    background-color: rgb(97, 204, 145);
+}
+
+.widget {
+    height: calc(100vh/4);
 }
 
 #dropdown-recent {
     width: 100%;
 }
 
-#results-container {
+.bg-blur {
     background-color: rgba(136, 136, 136, 0.261);
     backdrop-filter: blur(10px);
+    height: 3rem;
 }
 
 #map {
@@ -38,7 +60,6 @@
 
 #current-weather {
     width: calc(100% - 16px);
-    height: calc(100vh/4);
 }
 
 @media (min-width: 1199px) {
@@ -49,7 +70,6 @@
 
     #current-weather {
         width: 100%;
-        height: calc(100vh/4);
     }
 
 }
