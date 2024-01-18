@@ -32,7 +32,7 @@ setInterval(() => {
 
 function bsIconGenerator(bs_className) {
     return `<i class="${bs_className}"></i>`;
-}
+};
 
 function dropDownRecent() {
 
@@ -313,7 +313,7 @@ function searchLocation(locationString) {
                                     humidity: forecast.list[39].main.humidity + ' %',
                                 }
                             ]
-                            let forecastContainer = $('<div>').addClass('d-flex gap-2 overflow-x-scroll');
+                            let forecastContainer = $('<div>').addClass('d-flex gap-2 flex-wrap');
 
                             $(forecastData).each((i, x) => {
                                 let date = dayjs(x.dt).format("DD/MM/YYYY");
@@ -339,7 +339,7 @@ function searchLocation(locationString) {
 
 // create weather widget
 function createWeatherWidget(weatherDescription, feelsLike, min_temp, max_temp, imgPath) {
-    return  `<div class="col-sm-12 col-md custom-bg-grey widget rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
+    return  `<div class="col-sm-12 col-md custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
                 <p class="text-start mb-0">${weatherDescription}</p>
                 <div class="d-flex flex-column">
                     <p class="fs-1 fw-bold text-center">${K2c(feelsLike)}</p>
@@ -360,7 +360,7 @@ function createWeatherWidget(weatherDescription, feelsLike, min_temp, max_temp, 
 
 // create wind widget
 function createWindWidget(speed, direction, imgPath) {
-    return `<div class="col-sm-12 col-md custom-bg-grey widget rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
+    return `<div class="col-sm-12 col-md custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
                 <p class="text-start mb-0">Wind</p>
                 <div class="container d-flex flex-column">
                     <div class="d-flex gap-4 justify-content-center">
@@ -380,7 +380,7 @@ function createWindWidget(speed, direction, imgPath) {
 
 // create forecast widget
 function createForecastWidget(date, imgPath, temp, wind, dir, humidity) {
-    return `<div class="col-sm-6 col-md-4 custom-bg-grey widget rounded-3 fw-light fs-2 text-capitalize p-4 z-n1">
+    return `<div class="widget custom-bg-grey rounded-3 fw-light fs-2 text-capitalize p-4 z-n1">
                 <p class="fs-4 text-start mb-0">${date}</p>
                 <img src="${imgPath}" class="wi-icon-sm">
                 <div class="container d-flex flex-column m-0 p-0">
