@@ -99,7 +99,9 @@ function renderResults(objArr) {
     const resultsContainer = $('#results-container').empty().addClass('bg-blur');
     if (objArr.length > 1) {
         $(resultsContainer).append($('<p>').addClass('m-0 fs-6').text('Did you mean:'))
-    } else {$(resultsContainer).empty().rmeoveClass('bg-blur')};
+    } else {
+        $(resultsContainer).empty().removeClass('bg-blur')
+    };
 
     $(objArr.splice(1)).each((i, r) => {
         let closeResult = $('<button>')
@@ -224,6 +226,7 @@ function searchLocation(locationString) {
                         let rowContainer = $('<div>').addClass('row gap-2');
                         let timeOfDay = dayjs().unix(dayjs().unix()+currentWeather.timezone) >= currentWeather.daylight.sunrise && dayjs().unix(dayjs().unix()+currentWeather.timezone) < currentWeather.daylight.sunset ? 'day' : 'night';
                         $(rowContainer).append(createWeatherWidget(currentWeather.weather.description, currentWeather.temp.feels_like, currentWeather.temp.min, currentWeather.temp.max, `./assets/images/svg/${getIcon(timeOfDay, currentWeather.weather.id)}.svg`));
+                        $(rowContainer).append(createWindWidget(currentWeather.wind.speed, degrees2cardinal(currentWeather.wind.direction), `./assets/images/svg/wind-beaufort-${windBeaufortScale(data.wind.speed)}.svg`));
                         $('#current-weather').append($(rowContainer));
 
                     })
@@ -264,12 +267,31 @@ function createWeatherWidget(weatherDescription, feelsLike, min_temp, max_temp, 
             </div>`
 };
 
+function createWindWidget(speed, direction, imgPath) {
+    return `<div class="col-sm-12 col-md custom-bg-grey widget rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
+                <p class="text-start mb-0">Wind</p>
+                <div class="container d-flex flex-column">
+                    <div class="d-flex gap-4 justify-content-center">
+                        <div class="d-flex flex-column">
+                            <p class="fs-1 fw-bold text-center">${speed}</p>
+                            <span class="badge rounded-pill fs-6 wind-speed">SPEED</span>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <p class="fs-1 fw-bold text-center">${direction}</p>
+                            <span class="badge small rounded-pill fs-6 wind-dir">DIRECTION</span>
+                        </div>
+                    </div>
+                </div>
+                <img src="${imgPath}" class="position-absolute start-50 top-50 translate-middle wi-icon-bg mt-auto">
+            </div>`
+}
+
 function K2c(K) {
     return (Number(K)-273).toFixed(2) + '°C';
 }
 
 // https://gist.github.com/basarat/4670200
-function degree2cardinal(angle) {
+function degrees2cardinal(angle) {
 
     const degreePerDirection = 360 / 8;
     const offsetAngle = Number(angle) + degreePerDirection / 2;
@@ -283,3 +305,7 @@ function degree2cardinal(angle) {
                 : (offsetAngle >= 6 * degreePerDirection && offsetAngle < 7 * degreePerDirection) ? "W ←"
                   : "NW ↖";
 };
+
+function windBeaufortScale(speed) {
+    return Math.ceil(Math.cbrt(Math.pow(speed/0.836, 2)));
+}
