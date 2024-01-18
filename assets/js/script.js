@@ -20,6 +20,11 @@ const marker1 = new mapboxgl.Marker()
 .addTo(map);
 };</script>`)
 
+$('#date-time').addClass('bg-blur');
+
+setInterval(() => {
+    $('#date-time').empty().append($('<p>').addClass('m-0 fs-6').text(`${dayjs().format('D/MM/YYYY')}`));
+}, 1000);
 
 function bsIconGenerator(bs_className) {
     return `<i class="${bs_className}"></i>`;
@@ -91,14 +96,14 @@ searchBtn.on('click', (e) => {
 // render the best unique results in the dashboard (up to 5 result)
 function renderResults(objArr) {
 
-    const resultsContainer = $('#results-container').empty();
+    const resultsContainer = $('#results-container').empty().addClass('bg-blur');
     if (objArr.length > 1) {
         $(resultsContainer).append($('<p>').addClass('m-0 fs-6').text('Did you mean:'))
-    };
+    } else {$(resultsContainer).empty().rmeoveClass('bg-blur')};
 
     $(objArr.splice(1)).each((i, r) => {
         let closeResult = $('<button>')
-            .addClass('btn btn-sm btn-warning rounded-pill')
+            .addClass('btn btn-sm btn-warning rounded-2')
             .text(`${r.name}, ${r.country}`)
             .on('click', (e) => {
                 e.preventDefault();
@@ -157,8 +162,7 @@ function searchLocation(locationString) {
 
                 // empty the current-weather container
                 $('#current-weather').empty();
-                // create and append the location name
-                // createCard($('#current-weather'), `Currently in ${data[0].name}, ${data[0].country}:`);
+
 
                 // save lat & lon
                 const lat = data[0].lat;
@@ -212,52 +216,16 @@ function searchLocation(locationString) {
                             daylight: {
                                 sunrise: data.sys.sunrise,
                                 sunset: data.sys.sunset,
-                            }
+                            },
+                            timezone: data.timezone,
                         }
 
                         // creating the grid to display the weather information
-                        const gridContainer = $('<div>').addClass('row gap-2 h-100');
-                        $('#current-weather').append($(gridContainer));
+                        let rowContainer = $('<div>').addClass('row gap-2');
+                        let timeOfDay = dayjs().unix(dayjs().unix()+currentWeather.timezone) >= currentWeather.daylight.sunrise && dayjs().unix(dayjs().unix()+currentWeather.timezone) < currentWeather.daylight.sunset ? 'day' : 'night';
+                        $(rowContainer).append(createWeatherWidget(currentWeather.weather.description, currentWeather.temp.feels_like, currentWeather.temp.min, currentWeather.temp.max, `./assets/images/svg/${getIcon(timeOfDay, currentWeather.weather.id)}.svg`));
+                        $('#current-weather').append($(rowContainer));
 
-                        // 1 row widgets
-                        const widgets = [
-                            $('<div>').addClass('col custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4')
-                            .text(currentWeather.weather.description)
-                            .append($('<img>')
-                                .attr('src', './assets/images/svg/'+getIcon('night',`${currentWeather.weather.id}`)+'.svg')
-                                .addClass('position-absolute top-50 start-50 translate-middle opacity-75 wi-icon-bg')),
-                            $('<div>').addClass('col p-4 custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize d-flex flex-column align-content-start justify-content-between')
-                            .append($('<p>').addClass('text-start').text('Temperature'))
-                            .append($('<div>').addClass('d-flex flex-row align-items-end justify-content-between')
-                                    .append($('<p>')
-                                        .addClass('fs-5')
-                                        .text(K2c(currentWeather.temp.min)))
-                                    .append($('<p>')
-                                        .text(K2c(currentWeather.temp.feels_like)))
-                                    .append($('<p>')
-                                        .addClass('fs-5')
-                                        .text(K2c(currentWeather.temp.max))))
-                            .append($('<img>')
-                            .attr('src', './assets/images/svg/thermometer-celsius.svg')
-                            .addClass('position-absolute top-50 start-50 translate-middle opacity-50 wi-icon-bg')),
-                            $('<div>').addClass('col p-4 custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize d-flex flex-column align-content-start justify-content-between')
-                            .append($('<p>')
-                                .addClass('text-start')
-                                .text('Humidity'))
-                            .append($('<p>')
-                                .addClass('text-start')
-                                .text(currentWeather.humidty))
-                            .append($('<img>')
-                                .attr('src', './assets/images/svg/humidity.svg')
-                                .addClass('position-absolute top-50 start-50 translate-middle opacity-50 wi-icon-bg')),
-                        ];
-
-                        $(widgets).each((i, w) => {$(gridContainer).append(w)});
-
-                        // const weatherContainer = $('<div>').addClass('row gap-2').append
-
-
-                        // $('#current-weather').append($('<img>').addClass('wi-icon-md').attr('src', `./assets/images/svg/${iconMap["openweathermap/codes/"][weatherIcon]}.svg`));
                     })
                     // console log the error if any
                     .catch(error => console.log(error));
@@ -275,20 +243,43 @@ function searchLocation(locationString) {
     }
 };
 
-// create card function - it needs parent id/class using the selectors (# or .) and a title for the card
-function createCard(parent, title) {
-    let col = $('<div>').addClass('col');
-    let card = $('<div>').addClass('card h-100 border-0 rounded-4 bg-body-secondary');
-    let cardBody = $('<div>').addClass('card-body');
-    let cardTitle = $('<h5>').addClass('card-title').text(title);
-
-    $(cardBody).append(cardTitle);
-    $(card).append(cardBody);
-    $(col).append(card);
-
-    $(parent).append(col);
+// create weather widget - it needs parent id/class using the selectors (# or .) and a title for the card
+function createWeatherWidget(weatherDescription, feelsLike, min_temp, max_temp, imgPath) {
+    return  `<div class="col-sm-12 col-md custom-bg-grey widget rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
+                <p class="text-start mb-0">${weatherDescription}</p>
+                <div class="d-flex flex-column">
+                    <p class="fs-1 fw-bold text-center">${K2c(feelsLike)}</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <div class="d-flex flex-column">
+                            <p class="fs-5 mb-0 fw-bolder text-center">${K2c(min_temp)}</p>
+                            <span class="badge rounded-pill fs-6 min-temp">MIN</span>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <p class="fs-5 mb-0 fw-light text-center">${K2c(max_temp)}</p>
+                            <span class="badge small rounded-pill fs-6 max-temp">MAX</span>
+                        </div>
+                    </div>
+                </div>
+                <img src="${imgPath}" class="position-absolute start-50 top-50 translate-middle wi-icon-bg mt-auto">
+            </div>`
 };
 
 function K2c(K) {
-    return (Number(K)-273).toFixed() + '°C';
+    return (Number(K)-273).toFixed(2) + '°C';
 }
+
+// https://gist.github.com/basarat/4670200
+function degree2cardinal(angle) {
+
+    const degreePerDirection = 360 / 8;
+    const offsetAngle = Number(angle) + degreePerDirection / 2;
+  
+    return (offsetAngle >= 0 * degreePerDirection && offsetAngle < 1 * degreePerDirection) ? "N ↑"
+      : (offsetAngle >= 1 * degreePerDirection && offsetAngle < 2 * degreePerDirection) ? "NE ↗"
+        : (offsetAngle >= 2 * degreePerDirection && offsetAngle < 3 * degreePerDirection) ? "E →"
+          : (offsetAngle >= 3 * degreePerDirection && offsetAngle < 4 * degreePerDirection) ? "SE ↘"
+            : (offsetAngle >= 4 * degreePerDirection && offsetAngle < 5 * degreePerDirection) ? "S ↓"
+              : (offsetAngle >= 5 * degreePerDirection && offsetAngle < 6 * degreePerDirection) ? "SW ↙"
+                : (offsetAngle >= 6 * degreePerDirection && offsetAngle < 7 * degreePerDirection) ? "W ←"
+                  : "NW ↖";
+};
