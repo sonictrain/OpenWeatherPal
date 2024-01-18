@@ -317,7 +317,7 @@ function searchLocation(locationString) {
 
                             $(forecastData).each((i, x) => {
                                 let date = dayjs(x.dt).format("DD/MM/YYYY");
-                                $(forecastContainer).append(createForecastWidget(date, `./assets/images/svg/${getIcon('icons', x.icon)}.svg`, K2c(x.temp.feels_like), x.wind.speed, degrees2cardinal(x.wind.dir), x.humidity));
+                                $(forecastContainer).append(createForecastWidget(date, `./assets/images/svg/${getIcon('icons', x.icon)}.svg`, K2c(x.temp.feels_like), x.wind.speed, degrees2cardinal(x.wind.direction), x.humidity));
                             });
                             $('#forecast-weather').append($(forecastContainer));
                         });
