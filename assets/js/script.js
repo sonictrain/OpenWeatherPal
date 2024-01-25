@@ -150,7 +150,6 @@ function searchLocation(locationString) {
                         return obj;
                     }
                 })
-                console.log(data);
                 renderResults(data);
 
                 // if location is not yet in the recent dropdown add it and refresh the list
@@ -217,7 +216,7 @@ function searchLocation(locationString) {
                                 },
                             wind: {
                                 direction: data.wind.deg,
-                                speed: data.wind.speed + ' m/s',
+                                speed: data.wind.speed,
                             },
                             daylight: {
                                 sunrise: data.sys.sunrise,
@@ -229,8 +228,8 @@ function searchLocation(locationString) {
                         // creating the grid to display the weather information
                         let rowContainer = $('<div>').addClass('row gap-2');
                         let timeOfDay = dayjs().unix(dayjs().unix()+currentWeather.timezone) >= currentWeather.daylight.sunrise && dayjs().unix(dayjs().unix()+currentWeather.timezone) < currentWeather.daylight.sunset ? 'day' : 'night';
-                        $(rowContainer).append(createWeatherWidget(currentWeather.weather.description, currentWeather.temp.feels_like, currentWeather.temp.min, currentWeather.temp.max, `./assets/images/svg/${getIcon(timeOfDay, currentWeather.weather.id)}.svg`));
-                        $(rowContainer).append(createWindWidget(currentWeather.wind.speed, degrees2cardinal(currentWeather.wind.direction), `./assets/images/svg/wind-beaufort-${windBeaufortScale(data.wind.speed)}.svg`));
+                        $(rowContainer).append(createWeatherWidget(currentWeather.weather.description, currentWeather.temp.actual, currentWeather.temp.feels_like, currentWeather.temp.min, currentWeather.temp.max, `./assets/images/svg/${getIcon(timeOfDay, currentWeather.weather.id)}.svg`));
+                        $(rowContainer).append(createWindWidget((currentWeather.wind.speed*3.6).toFixed(2), degrees2cardinal(currentWeather.wind.direction), `./assets/images/svg/wind-beaufort-${windBeaufortScale(data.wind.speed)}.svg`));
                         $('#current-weather').append($(rowContainer));
 
                         const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
@@ -240,13 +239,12 @@ function searchLocation(locationString) {
                             return response.json();
                         })
                         .then(function (forecast) {
-                            console.log(forecast);
                             let forecastData = [
                                 {
                                     dt: forecast.list[7].dt_txt,
                                     icon: forecast.list[7].weather[0].icon,
                                     temp: {
-                                        feels_like: forecast.list[7].main.feels_like,
+                                        actual: forecast.list[7].main.temp,
                                         max: forecast.list[7].main.temp_max,
                                         min: forecast.list[7].main.temp_min,
                                     },
@@ -260,7 +258,7 @@ function searchLocation(locationString) {
                                     dt: forecast.list[15].dt_txt,
                                     icon: forecast.list[15].weather[0].icon,
                                     temp: {
-                                        feels_like: forecast.list[15].main.feels_like,
+                                        actual: forecast.list[15].main.temp,
                                         max: forecast.list[15].main.temp_max,
                                         min: forecast.list[15].main.temp_min,
                                     },
@@ -274,7 +272,7 @@ function searchLocation(locationString) {
                                     dt: forecast.list[23].dt_txt,
                                     icon: forecast.list[23].weather[0].icon,
                                     temp: {
-                                        feels_like: forecast.list[23].main.feels_like,
+                                        actual: forecast.list[23].main.temp,
                                         max: forecast.list[23].main.temp_max,
                                         min: forecast.list[23].main.temp_min,
                                     },
@@ -288,7 +286,7 @@ function searchLocation(locationString) {
                                     dt: forecast.list[31].dt_txt,
                                     icon: forecast.list[31].weather[0].icon,
                                     temp: {
-                                        feels_like: forecast.list[31].main.feels_like,
+                                        actual: forecast.list[31].main.temp,
                                         max: forecast.list[31].main.temp_max,
                                         min: forecast.list[31].main.temp_min,
                                     },
@@ -302,7 +300,7 @@ function searchLocation(locationString) {
                                     dt: forecast.list[39].dt_txt,
                                     icon: forecast.list[39].weather[0].icon,
                                     temp: {
-                                        feels_like: forecast.list[39].main.feels_like,
+                                        actual: forecast.list[39].main.temp,
                                         max: forecast.list[39].main.temp_max,
                                         min: forecast.list[39].main.temp_min,
                                     },
@@ -317,7 +315,7 @@ function searchLocation(locationString) {
 
                             $(forecastData).each((i, x) => {
                                 let date = dayjs(x.dt).format("DD/MM/YYYY");
-                                $(forecastContainer).append(createForecastWidget(date, `./assets/images/svg/${getIcon('icons', x.icon)}.svg`, K2c(x.temp.feels_like), x.wind.speed, degrees2cardinal(x.wind.direction), x.humidity));
+                                $(forecastContainer).append(createForecastWidget(date, `./assets/images/svg/${getIcon('icons', x.icon)}.svg`, K2c(x.temp.actual), x.wind.speed, degrees2cardinal(x.wind.direction), x.humidity));
                             });
                             $('#forecast-weather').append($(forecastContainer));
                         });
@@ -338,12 +336,15 @@ function searchLocation(locationString) {
 };
 
 // create weather widget
-function createWeatherWidget(weatherDescription, feelsLike, min_temp, max_temp, imgPath) {
+function createWeatherWidget(weatherDescription, actual, feelsLike, min_temp, max_temp, imgPath) {
     return  `<div class="col-sm-12 col-md custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
                 <p class="text-start mb-0">${weatherDescription}</p>
                 <div class="d-flex flex-column">
-                    <p class="fs-1 fw-bold text-center">${K2c(feelsLike)}</p>
-                    <div class="d-flex gap-3 justify-content-center">
+                    <div class="d-flex gap-2 justify-content-center align-items-center">
+                        <p class="fs-1 fw-bold">${K2c(actual)}</p>
+                        <p class="fs-3">(${K2c(feelsLike)})</p>
+                    </div>
+                        <div class="d-flex gap-3 justify-content-center">
                         <div class="d-flex flex-column">
                             <p class="fs-5 mb-0 fw-bolder text-center">${K2c(min_temp)}</p>
                             <span class="badge rounded-pill fs-6 min-temp">MIN</span>
@@ -363,9 +364,9 @@ function createWindWidget(speed, direction, imgPath) {
     return `<div class="col-sm-12 col-md custom-bg-grey rounded-3 position-relative fw-light fs-2 text-capitalize p-4 z-n1">
                 <p class="text-start mb-0">Wind</p>
                 <div class="container d-flex flex-column">
-                    <div class="d-flex gap-4 justify-content-center">
+                    <div class="d-flex gap-5 justify-content-center">
                         <div class="d-flex flex-column">
-                            <p class="fs-1 fw-bold text-center">${speed}</p>
+                            <p class="fs-1 fw-bold text-center">${speed} Km/h</p>
                             <span class="badge rounded-pill fs-6 wind-speed">SPEED</span>
                         </div>
                         <div class="d-flex flex-column">
@@ -385,16 +386,16 @@ function createForecastWidget(date, imgPath, temp, wind, dir, humidity) {
                 <img src="${imgPath}" class="wi-icon-sm">
                 <div class="container d-flex flex-column m-0 p-0">
                     <div class="d-flex flex-column gap-1 mt-2">
-                        <div class="d-flex gap-2 fw-normal">
+                        <div class="d-flex gap-1 fw-normal">
                             <p class="fs-6 text-center">Temp:</p>
                             <p class="fs-6 text-center">${temp}</p>
                         </div>
-                        <div class="d-flex gap-2 fw-normal">
+                        <div class="d-flex gap-1 fw-normal">
                             <p class="fs-6 text-center">Wind:</p>
                             <p class="fs-6 text-center">${wind}</p>
                             <p class="fs-6 fw-lighter text-center">${dir}</p>
                         </div>
-                        <div class="d-flex gap-2 fw-normal">
+                        <div class="d-flex gap-1 fw-normal">
                             <p class="fs-6 text-center">Humidity:</p>
                             <p class="fs-6 text-center">${humidity}</p>
                         </div>
