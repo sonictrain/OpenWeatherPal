@@ -17,7 +17,7 @@
 
   <nav class="navbar mx-2 mx-xl-auto col-xl-10 col-xxl-8 px-2 sticky-top custom-bg-grey rounded-bottom-4">
     <div class="d-flex">
-      <a class="navbar-brand ms-2" href="#">OpenWeatherPal</a>
+      <a class="navbar-brand ms-2" id="appTitle" href="https://github.com/sonictrain/OpenWeatherPal"></a>
     </div>
     <div class="d-flex">
       <div class="input-group has-validation">
@@ -25,7 +25,7 @@
           <input type="text" class="form-control input-validation" id="inputCity" placeholder="Location" required>
           <label for="inputCity" id="input-label">City</label>
         </div>
-        <button class="btn btn-outline-secondary" id="search-btn" type="submit">Search</button>
+        <button class="btn btn-outline-secondary" id="search-btn" type="submit"><i class="bi bi-search"></i></button>
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split rounded-end-3"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
@@ -41,7 +41,7 @@
     <!-- MAP -->
     <div class="position-relative rounded-4 overflow-hidden" id="map">
       <!-- RELATED RESULTS CONTAINER -->
-      <div class="d-flex flex-wrap gap-2 align-items-center position-absolute top-0 end-0 z-3 m-2 p-2 rounded-3" id="results-container"></div>
+      <div class="d-flex gap-2 justify-content-end align-items-center position-absolute z-3 m-2 p-2 rounded-3 bg-blur" id="results-container"></div>
       <!-- DATE AND TIME -->
       <div class="d-flex flex-wrap gap-2 align-items-center position-absolute top-0 start-0 z-3 m-2 p-2 rounded-2" id="date-time">
       </div>
